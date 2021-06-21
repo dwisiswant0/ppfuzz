@@ -1,0 +1,19 @@
+[package]
+name = "ppfuzz"
+version = "0.0.1"
+authors = ["Dwi Siswanto <me@dw1.io>"]
+edition = "2018"
+description = "A fast tool to scan prototype pollution vulnerability written in Rust"
+repository = "https://github.com/dwisiswant0/ppfuzz"
+license = "GPL-3.0-or-later"
+keywords = ["prototype-pollution", "vulnerability-scanner", "bugbounty", "headless_chrome"]
+readme = "README.md"
+
+[dependencies]
+atty = "0.2"
+clap = { version = "3.0.0-beta.2", features = ["yaml"] }
+colored = "2"
+url = "2.2"
+futures = "0.3"
+async-std = "1.9"
+chromiumoxide = { git = "https://github.com/mattsse/chromiumoxide", branch = "main"}
