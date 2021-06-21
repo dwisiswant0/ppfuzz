@@ -39,19 +39,19 @@ async fn main() {
 		}
 	}
 
-    let (browser, mut handler) = Browser::launch(
-    	BrowserConfig::builder()
-    		.build()
-    		.unwrap()
+	let (browser, mut handler) = Browser::launch(
+		BrowserConfig::builder()
+			.build()
+			.unwrap()
 		)
-    	.await
-    	.unwrap();
+		.await
+		.unwrap();
 
-    let _handle = async_std::task::spawn(async move {
-        loop {
-            let _ = handler.next().await.unwrap();
-        }
-    });
+	let _handle = async_std::task::spawn(async move {
+		loop {
+			let _ = handler.next().await.unwrap();
+		}
+	});
 
 	let check = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
 	for c in coll {
