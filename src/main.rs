@@ -32,12 +32,12 @@ async fn main() {
 		urls.extend(reader::from_file(list.unwrap()))
 	}
 
-	let mut coll: Vec<String> = vec![String::new(); 0];
-	for url in urls {
-		if url.starts_with("http") {
-			coll.extend(builder::query(url))
-		}
-	}
+	let coll: Vec<_> = urls
+		.into_iter()
+		.filter(|url| url
+			.starts_with("http"))
+		.flat_map(|url| builder::query(url))
+		.collect();
 
 	let (browser, mut handler) = Browser::launch(
 		BrowserConfig::builder()
