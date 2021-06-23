@@ -9,3 +9,11 @@ args:
         value_name: FILE
         about: List of URLs
         takes_value: true
+    - timeout:
+        short: t
+        long: timeout
+        about: Max. time allowed for connection
+    - concurrency:
+        short: c
+        long: concurrency
+        about: Set the concurrency level
