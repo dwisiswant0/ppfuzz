@@ -1,5 +1,6 @@
 mod builder;
 mod reader;
+mod ppfuzz;
 
 use {
 	atty::Stream,
@@ -8,7 +9,7 @@ use {
 	std::{
 		io::{self, BufRead},
 		process,
-		sync::Arc
+		time::Duration
 	},
 	colored::*,
 	futures::StreamExt
@@ -42,6 +43,7 @@ async fn main() {
 
 	let (browser, mut handler) = Browser::launch(
 		BrowserConfig::builder()
+			.request_timeout(Duration::from_secs(10))
 			.build()
 			.unwrap()
 		)
@@ -54,28 +56,5 @@ async fn main() {
 		}
 	});
 
-	let browser = Arc::new(browser);
-	let check = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
-	let mut stream = futures::stream::iter(coll.into_iter().map(|url| (url, Arc::clone(&browser))).map(|(url, browser)| async move {
-		let page = browser.new_page(&url).await.unwrap();
-		let vuln: bool = page.evaluate(check)
-			.await
-			.unwrap()
-			.into_value()
-			.unwrap();
-
-		Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
-	})).buffer_unordered(25);
-
-	while let Some(res) = stream.next().await {
-		if let Ok((ref url, vuln, page)) = res {
-			if vuln {
-				println!("[{}] {}", "VULN".green(), url)
-			} else {
-				eprintln!("[{}] {}", "ERRO".red(), url)
-			}
-
-			page.close().await.unwrap();
-		}
-	}
+	ppfuzz::check(coll, browser).await;
 }
