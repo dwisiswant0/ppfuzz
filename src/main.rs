@@ -65,7 +65,7 @@ async fn main() {
 			.unwrap();
 
 		Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
-	})).buffered(25);
+	})).buffer_unordered(25);
 
 	while let Some(res) = stream.next().await {
 		if let Ok((ref url, vuln, page)) = res {
