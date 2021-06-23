@@ -7,7 +7,8 @@ use {
 	clap::{App, load_yaml},
 	std::{
 		io::{self, BufRead},
-		process
+		process,
+		sync::Arc
 	},
 	colored::*,
 	futures::StreamExt
@@ -53,17 +54,28 @@ async fn main() {
 		}
 	});
 
+	let browser = Arc::new(browser);
 	let check = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
-	for c in coll {
-		let page = browser.new_page(&c).await.unwrap();
+	let mut stream = futures::stream::iter(coll.into_iter().map(|url| (url, Arc::clone(&browser))).map(|(url, browser)| async move {
+		let page = browser.new_page(&url).await.unwrap();
 		let vuln: bool = page.evaluate(check)
 			.await
 			.unwrap()
 			.into_value()
 			.unwrap();
 
-		if vuln {
-			println!("[{}] {}", "VULN".green(), c)
+		Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
+	})).buffered(25);
+
+	while let Some(res) = stream.next().await {
+		if let Ok((ref url, vuln, page)) = res {
+			if vuln {
+				println!("[{}] {}", "VULN".green(), url)
+			} else {
+				eprintln!("[{}] {}", "ERRO".red(), url)
+			}
+
+			page.close().await.unwrap();
 		}
 	}
 }
