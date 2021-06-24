@@ -12,10 +12,10 @@ args:
     - timeout:
         short: t
         long: timeout
-        default_value: 30
+        default_value: "30"
         about: Max. time allowed for connection (s)
     - concurrency:
         short: c
         long: concurrency
-        default_value: 5
+        default_value: "5"
         about: Set the concurrency level
