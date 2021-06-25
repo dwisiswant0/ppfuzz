@@ -21,7 +21,7 @@ async fn main() {
 	let matches = App::from(yaml).get_matches();
 	let list = matches.value_of("list");
 	let timeout: u64 = matches.value_of_t("timeout").unwrap_or(30);
-	let concurrency: u64 = matches.value_of_t("concurrency").unwrap_or(5);
+	let concurrency: usize = matches.value_of_t("concurrency").unwrap_or(5);
 	let mut urls: Vec<String> = vec![String::new(); 0];
 
 	if list.is_none() {

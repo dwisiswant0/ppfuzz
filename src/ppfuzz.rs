@@ -1,14 +1,11 @@
 use {
 	chromiumoxide::Browser,
-	std::{
-		sync::Arc,
-		convert::TryInto
-	},
+	std::sync::Arc,
 	futures::StreamExt,
 	colored::*,
 };
 
-pub async fn check(urls: Vec<String>, browser: Browser, concurrency: u64) {
+pub async fn check(urls: Vec<String>, browser: Browser, concurrency: usize) {
 	let browser = Arc::new(browser);
 	let check = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
 	let mut stream = futures::stream::iter(urls.into_iter()
@@ -22,7 +19,7 @@ pub async fn check(urls: Vec<String>, browser: Browser, concurrency: u64) {
 
 			Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
 		}
-	)).buffer_unordered(concurrency.try_into().unwrap());
+	)).buffer_unordered(concurrency);
 
 	while let Some(res) = stream.next().await {
 		if let Ok((ref url, vuln, page)) = res {
