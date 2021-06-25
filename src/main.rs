@@ -22,7 +22,7 @@ async fn main() {
 	let list = matches.value_of("list");
 	let timeout: u64 = matches.value_of_t("timeout").unwrap_or(30);
 	let concurrency: usize = matches.value_of_t("concurrency").unwrap_or(5);
-	let mut urls: Vec<String> = vec![String::new(); 0];
+	let mut urls: Vec<String> = vec![];
 
 	if list.is_none() {
 		if atty::isnt(Stream::Stdin) {
