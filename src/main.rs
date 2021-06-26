@@ -58,5 +58,5 @@ async fn main() {
 		}
 	});
 
-	ppfuzz::check(coll, browser, concurrency, timeout).await;
+	ppfuzz::check(coll, browser, concurrency).await;
 }
