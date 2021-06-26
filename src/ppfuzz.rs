@@ -13,23 +13,23 @@ pub async fn check(urls: Vec<String>, browser: Browser, concurrency: usize) {
 		.map(|(url, browser)| async move {
 			let page = browser.new_page(&url).await.unwrap();
 			let vuln: bool = match page.evaluate(check).await {
-					Ok(res) => res.into_value().unwrap(),
-					Err(_err) => false,
-				};
+				Ok(res) => res.into_value().unwrap(),
+				Err(_err) => false,
+			};
 
-			Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
+			page.close().await.unwrap();
+
+			Ok::<_, Box<dyn std::error::Error>>((url, vuln))
 		}
 	)).buffer_unordered(concurrency);
 
 	while let Some(res) = stream.next().await {
-		if let Ok((ref url, vuln, page)) = res {
+		if let Ok((ref url, vuln)) = res {
 			if vuln {
 				println!("[{}] {}", "VULN".green(), url)
 			} else {
 				eprintln!("[{}] {}", "ERRO".red(), url)
 			}
-
-			page.close().await.unwrap();
 		}
 	}
 }
