@@ -44,11 +44,15 @@ async fn main() {
 		.collect();
 
 	let (browser, mut handler) = Browser::launch(
-		BrowserConfig::builder()
+		match BrowserConfig::builder()
 			.request_timeout(Duration::from_secs(timeout))
-			.build()
-			.unwrap()
-		)
+			.build() {
+				Ok(res) => res,
+				Err(err) => {
+					eprintln!("{}.", err.red());
+					process::exit(1)
+				},
+			})
 		.await
 		.unwrap();
 
