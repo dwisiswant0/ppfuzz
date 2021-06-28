@@ -36,13 +36,6 @@ async fn main() {
 		urls.extend(reader::from_file(list.unwrap()))
 	}
 
-	let coll: Vec<_> = urls
-		.into_iter()
-		.filter(|url| url
-			.starts_with("http"))
-		.flat_map(|url| builder::query(url))
-		.collect();
-
 	let (browser, mut handler) = Browser::launch(
 		match BrowserConfig::builder()
 			.request_timeout(Duration::from_secs(timeout))
@@ -62,5 +55,10 @@ async fn main() {
 		}
 	});
 
-	ppfuzz::check(coll, browser, concurrency).await;
+	ppfuzz::check(urls
+		.into_iter()
+		.filter(|url| url
+			.starts_with("http"))
+		.flat_map(|url| builder::query(url))
+		.collect(), browser, concurrency).await;
 }
