@@ -21,7 +21,7 @@ pub async fn check(urls: Vec<String>, browser: Browser, concurrency: usize, time
 			let page = browser.new_page(&url).await.unwrap();
 			let vuln = match page.evaluate(check).await {
 				Ok(res) => res.into_value().unwrap(),
-				Err(_err) => false,
+				Err(_) => false,
 			};
 
 			Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
