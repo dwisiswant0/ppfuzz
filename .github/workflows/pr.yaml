@@ -1,0 +1,31 @@
+name: "Pull request checks"
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v2
+
+      - name: "Add clippy component"
+        uses: actions-rs/toolchain@v1.0.6
+        with:
+            toolchain: stable
+            components: clippy
+            override: true
+
+      - name: "Do clippy check"
+        uses: actions-rs/clippy-check@v1.0.7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features
+
+      - name: "Build"
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: build
+          args: --verbose
