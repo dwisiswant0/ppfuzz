@@ -3,7 +3,15 @@ name = "ppfuzz"
 version = "0.0.1"
 authors = ["Dwi Siswanto <me@dw1.io>"]
 edition = "2018"
-description = "A fast tool to scan prototype pollution vulnerability written in Rust"
+description = """
+   ___ ___ ___          
+  | x | x | __/ _.__.___
+  |  _|  _| _| | |/ // /
+  |_| |_| |_|`___/__/__/
+
+  Prototype Pollution Fuzzer
+  @dwisiswant0                      
+"""
 repository = "https://github.com/dwisiswant0/ppfuzz"
 license = "GPL-3.0-or-later"
 keywords = ["prototype-pollution", "vulnerability-scanner", "bugbounty", "headless_chrome"]

@@ -11,13 +11,16 @@ use {
 		process, time::Duration
 	},
 	colored::*,
-	futures::StreamExt
+	futures::StreamExt,
+	clap::crate_description
 };
 
 #[async_std::main]
 async fn main() {
 	let opt = parser::get();
 	let mut urls: Vec<String> = vec![];
+
+	println!("{}", crate_description!());
 
 	if opt.list == Some("".to_string()) {
 		if atty::isnt(Stream::Stdin) {
