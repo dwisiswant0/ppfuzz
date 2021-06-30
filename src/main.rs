@@ -59,6 +59,6 @@ async fn main() {
 		.into_iter()
 		.filter(|url| url
 			.starts_with("http"))
-		.flat_map(|url| builder::query(url))
+		.flat_map(builder::query)
 		.collect(), browser, concurrency, timeout).await;
 }
