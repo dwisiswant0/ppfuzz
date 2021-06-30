@@ -1,8 +1,11 @@
-use std::{
-	fs::File,
-	io::{prelude::*, BufReader},
-	path::Path,
-	process,
+use {
+	std::{
+		fs::File,
+		io::{prelude::*, BufReader},
+		path::Path,
+		process,
+	},
+	colored::*,
 };
 
 pub fn from_file(filepath: impl AsRef<Path>) -> Vec<String> {
@@ -10,7 +13,8 @@ pub fn from_file(filepath: impl AsRef<Path>) -> Vec<String> {
 	let open = match File::open(filepath) {
 		Ok(file) => file,
 		Err(err) => {
-			eprintln!("Open '{}': {}", filepath.display(), err);
+			let msg = format!("Open '{}': {}.", filepath.display(), err);
+			eprintln!("{}", msg.red());
 			process::exit(1);
 		}
 	};
