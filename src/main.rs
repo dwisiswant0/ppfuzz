@@ -1,22 +1,14 @@
 mod builder;
 mod reader;
 mod ppfuzz;
+mod parser;
 
 use {
 	atty::Stream,
 	chromiumoxide::browser::{Browser, BrowserConfig},
-	clap::{
-		App,
-		load_yaml,
-		crate_authors,
-		crate_description,
-		crate_name,
-		crate_version
-	},
 	std::{
 		io::{self, BufRead},
-		process,
-		time::Duration
+		process, time::Duration
 	},
 	colored::*,
 	futures::StreamExt
@@ -24,21 +16,10 @@ use {
 
 #[async_std::main]
 async fn main() {
-	let yaml = load_yaml!("cli.yaml");
-	let usage = format!("{} -l FILE [OPTIONS]", crate_name!());
-	let app = App::from(yaml)
-		.author(crate_authors!())
-		.about(crate_description!())
-		.name(crate_name!())
-		.version(crate_version!())
-		.override_usage(&*usage);
-	let matches = app.get_matches();
-	let list = matches.value_of("list");
-	let timeout: u64 = matches.value_of_t("timeout").unwrap_or(30);
-	let concurrency: usize = matches.value_of_t("concurrency").unwrap_or(5);
+	let opt = parser::get();
 	let mut urls: Vec<String> = vec![];
 
-	if list.is_none() {
+	if opt.list == Some("".to_string()) {
 		if atty::isnt(Stream::Stdin) {
 			let stdin = io::stdin();
 			urls.extend(stdin.lock().lines().map(|l| l.unwrap()))
@@ -47,12 +28,12 @@ async fn main() {
 			process::exit(1)
 		}
 	} else {
-		urls.extend(reader::from_file(list.unwrap()))
+		urls.extend(reader::from_file(opt.list.as_ref().unwrap()))
 	}
 
 	let (browser, mut handler) = Browser::launch(
 		match BrowserConfig::builder()
-			.request_timeout(Duration::from_secs(timeout))
+			.request_timeout(Duration::from_secs(opt.timeout))
 			.build() {
 				Ok(res) => res,
 				Err(err) => {
@@ -74,5 +55,5 @@ async fn main() {
 		.filter(|url| url
 			.starts_with("http"))
 		.flat_map(builder::query)
-		.collect(), browser, concurrency, timeout).await;
+		.collect(), browser, opt.concurrency, opt.timeout).await;
 }
