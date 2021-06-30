@@ -5,7 +5,14 @@ mod ppfuzz;
 use {
 	atty::Stream,
 	chromiumoxide::browser::{Browser, BrowserConfig},
-	clap::{App, load_yaml},
+	clap::{
+		App,
+		load_yaml,
+		crate_authors,
+		crate_description,
+		crate_name,
+		crate_version
+	},
 	std::{
 		io::{self, BufRead},
 		process,
@@ -18,7 +25,14 @@ use {
 #[async_std::main]
 async fn main() {
 	let yaml = load_yaml!("cli.yaml");
-	let matches = App::from(yaml).get_matches();
+	let usage = format!("{} -l FILE [OPTIONS]", crate_name!());
+	let app = App::from(yaml)
+		.author(crate_authors!())
+		.about(crate_description!())
+		.name(crate_name!())
+		.version(crate_version!())
+		.override_usage(&*usage);
+	let matches = app.get_matches();
 	let list = matches.value_of("list");
 	let timeout: u64 = matches.value_of_t("timeout").unwrap_or(30);
 	let concurrency: usize = matches.value_of_t("concurrency").unwrap_or(5);
