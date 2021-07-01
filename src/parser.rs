@@ -1,11 +1,11 @@
 use {
 	clap::{
 		App,
-		load_yaml,
 		crate_authors,
 		crate_description,
 		crate_name,
-		crate_version
+		crate_version,
+		load_yaml,
 	}
 };
 

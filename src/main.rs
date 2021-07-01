@@ -1,18 +1,20 @@
 mod builder;
-mod reader;
-mod ppfuzz;
 mod parser;
+mod ppfuzz;
+mod reader;
 
 use {
 	atty::Stream,
-	chromiumoxide::browser::{Browser, BrowserConfig},
-	std::{
-		io::{self, BufRead},
-		process, time::Duration
+	chromiumoxide::browser::{
+		Browser, BrowserConfig,
 	},
+	clap::crate_description,
 	colored::*,
 	futures::StreamExt,
-	clap::crate_description
+	std::{
+		io::{self, BufRead},
+		process, time::Duration,
+	},
 };
 
 #[async_std::main]

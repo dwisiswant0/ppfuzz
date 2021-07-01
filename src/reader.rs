@@ -1,11 +1,10 @@
 use {
+	colored::*,
 	std::{
 		fs::File,
 		io::{prelude::*, BufReader},
-		path::Path,
-		process,
-	},
-	colored::*,
+		path::Path, process
+	}
 };
 
 pub fn from_file(filepath: impl AsRef<Path>) -> Vec<String> {

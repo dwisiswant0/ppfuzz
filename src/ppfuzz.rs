@@ -1,15 +1,9 @@
 use {
-	chromiumoxide::Browser,
-	std::{
-		sync::Arc,
-		time::Duration,
-	},
-	futures::{
-		StreamExt,
-		stream,
-	},
-	colored::*,
 	async_std::future,
+	chromiumoxide::Browser,
+	colored::*,
+	futures::{StreamExt, stream},
+	std::{sync::Arc, time::Duration},
 };
 
 pub async fn check(urls: Vec<String>, browser: Browser, concurrency: usize, timeout: u64) {
