@@ -25,7 +25,10 @@ pub struct Options {
 
 pub fn get() -> Options {
 	let yaml = load_yaml!("cli.yaml");
-	let usage = format!("{} -l FILE [OPTIONS]", crate_name!());
+	let usage = format!(
+		"{0} -l {1} {2}\n    cat {1} | {0} {2}",
+		crate_name!(), "FILE", "[OPTIONS]"
+	);
 	let app = App::from(yaml)
 		.author(crate_authors!())
 		.about(crate_description!())
