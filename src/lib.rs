@@ -1,5 +1,5 @@
-pub mod builder;
 pub mod browser;
-pub mod checker;
+pub mod builder;
+pub mod fuzzer;
 pub mod parser;
 pub mod reader;

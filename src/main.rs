@@ -7,25 +7,24 @@ use {
 
 use ppfuzz::{
 	browser, builder,
-	checker, parser,
+	fuzzer, parser,
 };
 
 #[async_std::main]
 async fn main() {
 	let opt = parser::get();
-	
+
 	println!("{}", crate_description!());
 
 	let urls = parser::urls(opt.list);
 	let (browser, mut handler) = browser::config(opt.timeout).await;
-
 	let _handle = async_std::task::spawn(async move {
 		loop {
 			let _ = handler.next().await.unwrap();
 		}
 	});
 
-	checker::new(urls
+	fuzzer::new(urls
 		.into_iter()
 		.filter(|url| url
 			.starts_with("http"))
