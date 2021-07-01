@@ -1,4 +1,5 @@
 use {
+	atty::Stream,
 	clap::{
 		App,
 		crate_authors,
@@ -6,13 +7,20 @@ use {
 		crate_name,
 		crate_version,
 		load_yaml,
-	}
+	},
+	colored::*,
+	std::{
+		io::{self, BufRead},
+		process,
+	},
 };
+
+use crate::reader;
 
 pub struct Options {
 	pub list: Option<String>,
 	pub timeout: u64,
-	pub concurrency: usize
+	pub concurrency: usize,
 }
 
 pub fn get() -> Options {
@@ -31,4 +39,22 @@ pub fn get() -> Options {
 		timeout: matches.value_of_t("timeout").unwrap_or(30),
 		concurrency: matches.value_of_t("concurrency").unwrap_or(5)
 	}
+}
+
+pub fn urls(list: Option<String>) -> Vec<String> {
+	let mut urls: Vec<String> = vec![];
+
+	if list == Some("".to_string()) {
+		if atty::isnt(Stream::Stdin) {
+			let stdin = io::stdin();
+			urls.extend(stdin.lock().lines().map(|l| l.unwrap()))
+		} else {
+			eprintln!("{}", "No input target provided!".red());
+			process::exit(1)
+		}
+	} else {
+		urls.extend(reader::from_file(list.as_ref().unwrap()))
+	}
+
+	urls
 }
