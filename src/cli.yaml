@@ -1,7 +1,4 @@
 name: ppfuzz
-version: "0.0.1"
-author: Dwi Siswanto <me@dw1.io>
-about: Prototype Pollution Fuzzer
 args:
     - list:
         short: l
@@ -9,3 +6,15 @@ args:
         value_name: FILE
         about: List of URLs
         takes_value: true
+    - timeout:
+        short: t
+        long: timeout
+        value_name: int
+        default_value: "30"
+        about: Max. time allowed for connection (s)
+    - concurrency:
+        short: c
+        long: concurrency
+        value_name: int
+        default_value: "5"
+        about: Set the concurrency level

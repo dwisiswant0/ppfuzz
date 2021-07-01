@@ -1,26 +1,28 @@
 mod builder;
 mod reader;
+mod ppfuzz;
+mod parser;
 
 use {
 	atty::Stream,
 	chromiumoxide::browser::{Browser, BrowserConfig},
-	clap::{App, load_yaml},
 	std::{
 		io::{self, BufRead},
-		process
+		process, time::Duration
 	},
 	colored::*,
-	futures::StreamExt
+	futures::StreamExt,
+	clap::crate_description
 };
 
 #[async_std::main]
 async fn main() {
-	let yaml = load_yaml!("cli.yaml");
-	let matches = App::from(yaml).get_matches();
-	let list = matches.value_of("list");
-	let mut urls: Vec<String> = vec![String::new(); 0];
+	let opt = parser::get();
+	let mut urls: Vec<String> = vec![];
 
-	if list.is_none() {
+	println!("{}", crate_description!());
+
+	if opt.list == Some("".to_string()) {
 		if atty::isnt(Stream::Stdin) {
 			let stdin = io::stdin();
 			urls.extend(stdin.lock().lines().map(|l| l.unwrap()))
@@ -29,21 +31,19 @@ async fn main() {
 			process::exit(1)
 		}
 	} else {
-		urls.extend(reader::from_file(list.unwrap()))
+		urls.extend(reader::from_file(opt.list.as_ref().unwrap()))
 	}
 
-	let coll: Vec<_> = urls
-		.into_iter()
-		.filter(|url| url
-			.starts_with("http"))
-		.flat_map(|url| builder::query(url))
-		.collect();
-
 	let (browser, mut handler) = Browser::launch(
-		BrowserConfig::builder()
-			.build()
-			.unwrap()
-		)
+		match BrowserConfig::builder()
+			.request_timeout(Duration::from_secs(opt.timeout))
+			.build() {
+				Ok(res) => res,
+				Err(err) => {
+					eprintln!("{}.", err.red());
+					process::exit(1)
+				},
+			})
 		.await
 		.unwrap();
 
@@ -53,17 +53,10 @@ async fn main() {
 		}
 	});
 
-	let check = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
-	for c in coll {
-		let page = browser.new_page(&c).await.unwrap();
-		let vuln: bool = page.evaluate(check)
-			.await
-			.unwrap()
-			.into_value()
-			.unwrap();
-
-		if vuln {
-			println!("[{}] {}", "VULN".green(), c)
-		}
-	}
+	ppfuzz::check(urls
+		.into_iter()
+		.filter(|url| url
+			.starts_with("http"))
+		.flat_map(builder::query)
+		.collect(), browser, opt.concurrency, opt.timeout).await;
 }
