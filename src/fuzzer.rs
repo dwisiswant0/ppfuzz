@@ -27,7 +27,9 @@ pub async fn new(
 		}
 	)).buffer_unordered(concurrency);
 
-	while let Ok(res) = async_std::future::timeout(Duration::from_secs(timeout), stream.next()).await {
+	while let Ok(res) = async_std::future::timeout(
+		Duration::from_secs(timeout), stream.next()
+	).await {
 		if let Some(Ok((ref url, vuln, page))) = res {
 			if vuln {
 				println!("[{}] {}", "VULN".green(), url)

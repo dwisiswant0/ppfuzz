@@ -38,9 +38,17 @@ pub fn get() -> Options {
 	let matches = app.get_matches();
 
 	Options {
-		list: Some(matches.value_of("list").unwrap_or("").to_owned()),
-		timeout: matches.value_of_t("timeout").unwrap_or(30),
-		concurrency: matches.value_of_t("concurrency").unwrap_or(5)
+		list: Some(
+			matches
+				.value_of("list")
+				.unwrap_or("").to_owned()
+			),
+		timeout: matches
+			.value_of_t("timeout")
+			.unwrap_or(30),
+		concurrency: matches
+			.value_of_t("concurrency")
+			.unwrap_or(5)
 	}
 }
 
