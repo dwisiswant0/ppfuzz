@@ -14,7 +14,8 @@ description = """
 """
 repository = "https://github.com/dwisiswant0/ppfuzz"
 license = "GPL-3.0-or-later"
-keywords = ["prototype-pollution", "vulnerability-scanner", "bugbounty", "headless_chrome"]
+keywords = ["ppfuzz", "prototype-pollution", "vulnerability-scanner"]
+categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
 readme = "README.md"
 
 [dependencies]
