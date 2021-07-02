@@ -5,14 +5,11 @@ use {
 	std::{sync::Arc, time::Duration},
 };
 
+use crate::parser;
+
 static CHECK_SCRIPT: &str = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
 
-pub async fn new(
-	urls: Vec<String>,
-	browser: Browser,
-	concurrency: usize,
-	timeout: u64
-) {
+pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	let browser = Arc::new(browser);
 	let mut stream = stream::iter(urls.into_iter()
 		.map(|url| (url, Arc::clone(&browser)))
@@ -25,10 +22,10 @@ pub async fn new(
 
 			Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
 		}
-	)).buffer_unordered(concurrency);
+	)).buffer_unordered(opt.concurrency);
 
 	while let Ok(res) = async_std::future::timeout(
-		Duration::from_secs(timeout), stream.next()
+		Duration::from_secs(opt.timeout), stream.next()
 	).await {
 		if let Some(Ok((ref url, vuln, page))) = res {
 			if vuln {

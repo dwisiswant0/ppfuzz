@@ -12,11 +12,11 @@ use ppfuzz::{
 
 #[async_std::main]
 async fn main() {
-	let opt = parser::get();
+	let mut opt = parser::Options::get();
 
 	println!("{}", crate_description!());
 
-	let urls = parser::urls(opt.list);
+	let urls = parser::Options::urls(&mut opt);
 	let (browser, mut handler) = browser::config(opt.timeout).await;
 	let _handle = async_std::task::spawn(async move {
 		loop {
@@ -29,5 +29,5 @@ async fn main() {
 		.filter(|url| url
 			.starts_with("http"))
 		.flat_map(builder::query)
-		.collect(), browser, opt.concurrency, opt.timeout).await;
+		.collect(), browser, opt).await;
 }
