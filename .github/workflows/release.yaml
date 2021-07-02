@@ -1,0 +1,51 @@
+name: "Release"
+on:
+  create:
+    tags:
+      - v*
+
+env:
+  BUILD_TARGETS: |
+    aarch64-unknown-linux-gnu, i686-pc-windows-gnu,
+    i686-pc-windows-msvc, i686-unknown-linux-gnu,
+    x86_64-apple-darwin, x86_64-apple-darwin,
+    x86_64-pc-windows-msvc, x86_64-unknown-linux-gnu,
+    aarch64-apple-darwin, aarch64-pc-windows-msvc,
+    aarch64-unknown-linux-musl, x86_64-unknown-freebsd,
+    x86_64-unknown-linux-musl, x86_64-unknown-netbsd
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v2
+
+      - name: "Set variables"
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      - name: "Set up toolchain"
+        uses: actions-rs/toolchain@v1.0.6
+        with:
+            toolchain: stable
+            target: ${{ env.BUILD_TARGETS }}
+
+      - name: "Build"
+        run: |
+          for target in $(echo ${{ env.BUILD_TARGETS }} | sed "s/,/ /g")
+          do
+            # echo "${{ github.repository }}-${{ steps.vars.outputs.tag }}_${target}"
+            cargo build \
+              --target ${target} \
+              --bin ${{ github.repository }}-${{ steps.vars.outputs.tag }}_${target} &
+          done
+
+          wait
+
+      - name: "Release"
+        uses: softprops/action-gh-release@v0.1.5
+        with:
+          files: ${{ github.repository }}-${{ steps.vars.outputs.tag }}_*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
