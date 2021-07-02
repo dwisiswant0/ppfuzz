@@ -8,6 +8,6 @@ pub fn get() -> Vec<String> {
 
 	suffixes
 		.iter()
-		.map(|suffix| PROTO.to_owned() + &suffix)
+		.map(|suffix| PROTO.to_owned() + suffix)
 		.collect()
 }
