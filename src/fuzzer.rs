@@ -2,7 +2,7 @@ use {
 	chromiumoxide::Browser,
 	colored::*,
 	futures::{StreamExt, stream},
-	std::{sync::Arc, time::Duration},
+	std::sync::Arc,
 };
 
 use crate::parser;
@@ -14,27 +14,41 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	let mut stream = stream::iter(urls.into_iter()
 		.map(|url| (url, Arc::clone(&browser)))
 		.map(|(url, browser)| async move {
-			let page = browser.new_page(&url).await.unwrap();
-			let vuln = match page.evaluate(CHECK_SCRIPT).await {
-				Ok(res) => res.into_value().unwrap(),
-				Err(_) => false,
+			let is_err: bool = false;
+			let mut detail: String = String::new();
+			let page = match browser.new_page(&url).await {
+				Ok(res) => res,
+				Err(err) => {
+					detail = err.to_string();
+					return Ok((url, false, !is_err, detail))
+				}
+			};
+			let vuln: bool = match page.evaluate(CHECK_SCRIPT).await {
+				Ok(res) => {
+					page.close().await.unwrap();
+					res.into_value().unwrap()
+				},
+				Err(_) => false
 			};
 
-			Ok::<_, Box<dyn std::error::Error>>((url, vuln, page))
+			Ok::<_, Box<dyn std::error::Error>>
+			((url, vuln, is_err, detail))
 		}
 	)).buffer_unordered(opt.concurrency);
 
-	while let Ok(res) = async_std::future::timeout(
-		Duration::from_secs(opt.timeout), stream.next()
-	).await {
-		if let Some(Ok((ref url, vuln, page))) = res {
+	while let Some(res) = stream.next().await {
+		if let Ok((ref url, vuln, is_err, detail)) = res {
 			if vuln {
 				println!("[{}] {}", "VULN".green(), url)
 			} else {
-				eprintln!("[{}] {}", "ERRO".red(), url)
-			}
+				let mut msg = format!("[{}] {}", "ERRO".red(), url);
+				if is_err {
+					let det = format!("({})", detail);
+					msg = format!("{} {}", msg, det.yellow());
+				}
 
-			page.close().await.unwrap();
+				eprintln!("{}", msg)
+			}
 		}
 	}
 }
