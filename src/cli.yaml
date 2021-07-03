@@ -4,7 +4,7 @@ args:
         short: l
         long: list
         value_name: FILE
-        about: List of URLs
+        about: List of target URLs
         takes_value: true
     - timeout:
         short: t
