@@ -1,6 +1,6 @@
 [package]
 name = "ppfuzz"
-version = "0.0.1-dev"
+version = "0.0.1"
 authors = ["Dwi Siswanto <me@dw1.io>"]
 edition = "2018"
 description = """
@@ -13,7 +13,6 @@ description = """
   @dwisiswant0                      
 """
 repository = "https://github.com/dwisiswant0/ppfuzz"
-license = "MIT"
 license-file = "LICENSE"
 keywords = ["ppfuzz", "prototype-pollution", "vulnerability-scanner"]
 categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
