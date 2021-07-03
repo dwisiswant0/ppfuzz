@@ -13,7 +13,8 @@ description = """
   @dwisiswant0                      
 """
 repository = "https://github.com/dwisiswant0/ppfuzz"
-license = "GPL-3.0-or-later"
+license = "MIT"
+license-file = "LICENSE"
 keywords = ["ppfuzz", "prototype-pollution", "vulnerability-scanner"]
 categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
 readme = "README.md"
