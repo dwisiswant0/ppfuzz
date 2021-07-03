@@ -15,7 +15,7 @@ pub async fn config(timeout: u64) -> (Browser, Handler) {
 			.build() {
 				Ok(res) => res,
 				Err(err) => {
-					errors::show(err.to_string());
+					errors::show(err);
 					process::exit(1)
 				},
 			})
