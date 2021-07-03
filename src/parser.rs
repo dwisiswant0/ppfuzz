@@ -8,14 +8,13 @@ use {
 		crate_version,
 		load_yaml,
 	},
-	colored::*,
 	std::{
 		io::{self, BufRead},
 		process,
 	},
 };
 
-use crate::reader;
+use crate::{errors, reader};
 
 pub struct Options {
 	pub list: Option<String>,
@@ -61,7 +60,7 @@ impl Options {
 				let stdin = io::stdin();
 				urls.extend(stdin.lock().lines().map(|l| l.unwrap()))
 			} else {
-				eprintln!("{}", "No input target provided!".red());
+				errors::show("No input target provided!".to_string());
 				process::exit(1)
 			}
 		} else {

@@ -1,19 +1,17 @@
-use {
-	colored::*,
-	std::{
-		fs::File,
-		io::{prelude::*, BufReader},
-		path::Path, process
-	}
+use std::{
+	fs::File,
+	io::{prelude::*, BufReader},
+	path::Path, process
 };
+
+use crate::errors;
 
 pub fn from_file(filepath: impl AsRef<Path>) -> Vec<String> {
 	let filepath = filepath.as_ref();
 	let open = match File::open(filepath) {
 		Ok(file) => file,
 		Err(err) => {
-			let msg = format!("Open '{}': {}.", filepath.display(), err);
-			eprintln!("{}", msg.red());
+			errors::show(format!("Open '{}': {}.", filepath.display(), err));
 			process::exit(1);
 		}
 	};

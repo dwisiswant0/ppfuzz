@@ -3,9 +3,10 @@ use {
 		browser::{Browser, BrowserConfig},
 		handler::Handler,
 	},
-	colored::*,
 	std::{process, time::Duration}
 };
+
+use crate::errors;
 
 pub async fn config(timeout: u64) -> (Browser, Handler) {
 	Browser::launch(
@@ -14,7 +15,7 @@ pub async fn config(timeout: u64) -> (Browser, Handler) {
 			.build() {
 				Ok(res) => res,
 				Err(err) => {
-					eprintln!("{}.", err.red());
+					errors::show(err.to_string());
 					process::exit(1)
 				},
 			})
