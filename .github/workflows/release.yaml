@@ -5,47 +5,110 @@ on:
       - v*
 
 env:
-  BUILD_TARGETS: |
-    aarch64-unknown-linux-gnu, i686-pc-windows-gnu,
-    i686-pc-windows-msvc, i686-unknown-linux-gnu,
-    x86_64-apple-darwin, x86_64-apple-darwin,
-    x86_64-pc-windows-msvc, x86_64-unknown-linux-gnu,
-    aarch64-apple-darwin, aarch64-pc-windows-msvc,
-    aarch64-unknown-linux-musl, x86_64-unknown-freebsd,
-    x86_64-unknown-linux-musl, x86_64-unknown-netbsd
+  CARGO_TERM_COLOR: always
 
 jobs:
-  pr:
-    runs-on: ubuntu-latest
+  release:
+    name: "Release"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - build: linux
+          os: ubuntu-latest
+          rust: stable
+          target: x86_64-unknown-linux-musl
+          cross: false
+        - build: arm-v7
+          os: ubuntu-latest
+          rust: stable
+          target: armv7-unknown-linux-gnueabihf
+          linker: gcc-arm-linux-gnueabihf
+          cross: true
+        - build: aarch64
+          os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+          linker: gcc-aarch64-linux-gnu
+          cross: true
+        - build: macos
+          os: macos-latest
+          rust: stable
+          target: x86_64-apple-darwin
+          cross: false
+        - build: windows
+          os: ubuntu-latest
+          rust: stable
+          target: x86_64-pc-windows-gnu
+          linker: mingw-w64
+          cross: true
+
     steps:
       - name: "Check out code"
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
       - name: "Set variables"
         id: vars
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
-      - name: "Set up toolchain"
-        uses: actions-rs/toolchain@v1.0.6
+      - name: "Caching cargo & rustup"
+        uses: actions/cache@v2.1.6
         with:
-            toolchain: stable
-            target: ${{ env.BUILD_TARGETS }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.rustup
+            target
+          key: ${{ runner.os }}-${{ matrix.rust }}
 
-      - name: "Build"
+      - name: "Install Linker"
+        if: matrix.cross
         run: |
-          for target in $(echo ${{ env.BUILD_TARGETS }} | sed "s/,/ /g")
-          do
-            # echo "${{ github.repository }}-${{ steps.vars.outputs.tag }}_${target}"
-            cargo build \
-              --target ${target} \
-              --bin ${{ github.repository }}-${{ steps.vars.outputs.tag }}_${target} &
-          done
+          sudo apt update
+          sudo apt install ${{ matrix.linker }}
 
-          wait
+      - name: "Add target build"
+        run: |
+          rustup install ${{ matrix.rust }}
+          rustup target add ${{ matrix.target }}
+          rustup show
 
-      - name: "Release"
+      - name: "Build package"
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: "Package artifacts"
+        run: |
+          echo "Set base path & make temp dir..."
+          BASE=$(pwd)
+          TEMP=$(mktemp -d $([[ "${RUNNER_OS}" == "macOS" ]] && echo "-t tmp"))
+
+          echo "Copy release binary & CD to temp dir..."
+          cp "target/${{ matrix.target }}/release/${{ github.event.repository.name }}$([[ "${{ matrix.build }}" == "windows" ]] && echo ".exe")" "${TEMP}/"
+          cd "${TEMP}"
+
+          echo "Set assets variable"
+          ASSET_NAME="${{ github.event.repository.name }}-${{ steps.vars.outputs.tag }}-${{ matrix.target }}.$([[ "${{ matrix.build }}" != "windows" ]] && echo "tar.gz" || echo "exe")"
+          ASSET_PATH="${BASE}/${ASSET_NAME}"
+          CHECKSUM_PATH="${ASSET_PATH%%.*}-SHA256.txt"
+
+          echo "Append assets variable to GitHub environment"
+          echo "ASSET_PATH=${ASSET_PATH}" >> $GITHUB_ENV
+          echo "CHECKSUM_PATH=${CHECKSUM_PATH}" >> $GITHUB_ENV
+
+          echo "Pack/copying asset binary..."
+          [[ "${{ matrix.build }}" != "windows" ]] && tar czf "${ASSET_PATH}" * || cp "${{ github.event.repository.name }}.exe" "${ASSET_PATH}"
+          cd "${BASE}"
+
+          echo "Add checksum..."
+          eval "$([[ "${RUNNER_OS}" == "Linux" ]] && echo "sha256sum" || echo "shasum -a 256") ${ASSET_NAME} > ${CHECKSUM_PATH}"
+
+      - name: "Release assets"
         uses: softprops/action-gh-release@v0.1.5
         with:
-          files: ${{ github.repository }}-${{ steps.vars.outputs.tag }}_*
+          files: |
+            ${{ env.ASSET_PATH }}
+            ${{ env.CHECKSUM_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
