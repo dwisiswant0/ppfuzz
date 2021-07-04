@@ -1,10 +1,10 @@
 # ppfuzz
 
 <p align="left">
-	<a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/made%20with-Rust-red?_=0"></a>
-	<a href="#"><img src="https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-blueviolet?_=0"></a>
-	<a href="https://github.com/dwisiswant0/ppfuzz/releases"><img src="https://img.shields.io/github/release/dwisiswant0/ppfuzz?color=blue&_=0"></a>
-	<a href="https://github.com/dwisiswant0/ppfuzz/issues"><img src="https://img.shields.io/github/issues/dwisiswant0/ppfuzz?color=yellow&_=0"></a>
+	<a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/made%20with-Rust-red"></a>
+	<a href="#"><img src="https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-blueviolet"></a>
+	<a href="https://github.com/dwisiswant0/ppfuzz/releases"><img src="https://img.shields.io/github/release/dwisiswant0/ppfuzz?color=blue"></a>
+	<a href="https://github.com/dwisiswant0/ppfuzz/issues"><img src="https://img.shields.io/github/issues/dwisiswant0/ppfuzz?color=yellow"></a>
 </p>
 
 Prototype Pollution Fuzzer
@@ -137,7 +137,8 @@ Cross-compile GitHub workflow inspired by [crodjer](https://github.com/crodjer)'
 Since this tool includes some contributions, I'll publically thank the following users for their helps and resources:
 
 - [@mattsse](https://github.com/mattsse) - for his awesome [chromiumoxide](https://github.com/mattsse/chromiumoxide) & mentoring me which helped a lot to quickly adapt Rust!
-- `Fourty2#4842` _(Discord)_ - for the helpful workaround.
+- `Fourty2#4842` _(Discord)_ - for helpful workaround.
+- [All contributors](https://github.com/dwisiswant0/ppfuzz/graphs/contributors).
 
 ## License
 
