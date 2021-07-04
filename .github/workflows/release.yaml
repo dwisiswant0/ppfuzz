@@ -105,7 +105,7 @@ jobs:
           eval "$([[ "${RUNNER_OS}" == "Linux" ]] && echo "sha256sum" || echo "shasum -a 256") ${ASSET_NAME} > ${CHECKSUM_PATH}"
 
       - name: "Release assets"
-        uses: softprops/action-gh-release@v0.1.5
+        uses: softprops/action-gh-release@v1
         with:
           files: |
             ${{ env.ASSET_PATH }}
