@@ -19,10 +19,10 @@ categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
 readme = "README.md"
 
 [dependencies]
+async-std = "1.9"
 atty = "0.2"
+chromiumoxide = "0.3.0"
 clap = { version = "3.0.0-beta.2", features = ["yaml"] }
 colored = "2"
-url = "2.2"
 futures = "0.3"
-async-std = "1.9"
-chromiumoxide = { git = "https://github.com/mattsse/chromiumoxide", branch = "main"}
+url = "2.2"
