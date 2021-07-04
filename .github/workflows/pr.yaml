@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Add clippy component"
-        uses: actions-rs/toolchain@v1.0.6
+        uses: actions-rs/toolchain@v1.0.7
         with:
             toolchain: stable
             components: clippy
