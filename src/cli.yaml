@@ -1,0 +1,20 @@
+name: ppfuzz
+args:
+    - list:
+        short: l
+        long: list
+        value_name: FILE
+        about: List of target URLs
+        takes_value: true
+    - timeout:
+        short: t
+        long: timeout
+        value_name: int
+        default_value: "30"
+        about: Max. time allowed for connection (s)
+    - concurrency:
+        short: c
+        long: concurrency
+        value_name: int
+        default_value: "5"
+        about: Set the concurrency level
