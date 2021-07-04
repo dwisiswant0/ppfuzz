@@ -1,0 +1,34 @@
+name: "Publish"
+on:
+  create:
+    tags:
+      - v*
+
+jobs:
+  crates:
+    name: Publish Crate
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v2
+
+      - name: "Caching cargo & rustup"
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.rustup
+            target
+          key: ${{ runner.os }}-stable
+
+      - name: "Setup toolchain"
+        run: rustup install stable
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: "Publish to crates.io"
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

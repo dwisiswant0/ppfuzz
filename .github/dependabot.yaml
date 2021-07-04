@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependency"
+    reviewers:
+      - "dwisiswant0"
+    commit-message:
+      prefix: "[ci skip]"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependency"
+    reviewers:
+      - "dwisiswant0"
+    commit-message:
+      prefix: "[ci skip]"

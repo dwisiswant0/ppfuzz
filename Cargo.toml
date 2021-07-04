@@ -1,0 +1,28 @@
+[package]
+name = "ppfuzz"
+version = "0.0.1"
+authors = ["Dwi Siswanto <me@dw1.io>"]
+edition = "2018"
+description = """
+   ___ ___ ___          
+  | x | x | __/ _.__.___
+  |  _|  _| _| | |/ // /
+  |_| |_| |_|`___/__/__/
+
+  Prototype Pollution Fuzzer
+  @dwisiswant0                      
+"""
+repository = "https://github.com/dwisiswant0/ppfuzz"
+license-file = "LICENSE"
+keywords = ["ppfuzz", "prototype-pollution", "vulnerability"]
+categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
+readme = "README.md"
+
+[dependencies]
+async-std = "1.9"
+atty = "0.2"
+chromiumoxide = "0.3.0"
+clap = { version = "3.0.0-beta.2", features = ["yaml"] }
+colored = "2"
+futures = "0.3"
+url = "2.2"
