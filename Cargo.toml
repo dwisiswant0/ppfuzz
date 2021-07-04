@@ -14,7 +14,7 @@ description = """
 """
 repository = "https://github.com/dwisiswant0/ppfuzz"
 license-file = "LICENSE"
-keywords = ["ppfuzz", "prototype-pollution", "vulnerability-scanner"]
+keywords = ["ppfuzz", "prototype-pollution", "vulnerability"]
 categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
 readme = "README.md"
 
