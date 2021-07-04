@@ -9,7 +9,17 @@ jobs:
       - name: "Check out code"
         uses: actions/checkout@v2
 
+      - name: "Changes filter"
+        uses: dorny/paths-filter@v2.10.2
+        id: changes
+        with:
+          filters: |
+            src:
+              - "Cargo.toml"
+              - "src/**"
+
       - name: "Add clippy component"
+        if: steps.changes.outputs.src == 'true'
         uses: actions-rs/toolchain@v1.0.7
         with:
             toolchain: stable

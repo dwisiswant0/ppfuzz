@@ -13,7 +13,17 @@ jobs:
       - name: "Check out code"
         uses: actions/checkout@v2
 
+      - name: "Changes filter"
+        uses: dorny/paths-filter@v2.10.2
+        id: changes
+        with:
+          filters: |
+            src:
+              - "Cargo.toml"
+              - "src/**"
+
       - name: "Build"
+        if: steps.changes.outputs.src == 'true'
         uses: actions-rs/cargo@v1.0.3
         with:
           command: build
