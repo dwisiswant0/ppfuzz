@@ -12,10 +12,13 @@ pub fn from_file(filepath: impl AsRef<Path>) -> Vec<String> {
 		Ok(file) => file,
 		Err(err) => {
 			errors::show(format!("Open '{}': {}.", filepath.display(), err));
-			process::exit(1);
+			process::exit(1)
 		}
 	};
 	let buf = BufReader::new(open);
 
-	buf.lines().map(|l| l.expect("Couldn't parse lines")).collect()
+	buf.lines().map(|l| l.unwrap_or_else(|err| {
+		errors::show(format!("Open '{}': {}.", filepath.display(), err));
+		process::exit(1)
+	})).collect()
 }
