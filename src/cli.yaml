@@ -16,5 +16,5 @@ args:
         short: c
         long: concurrency
         value_name: int
-        default_value: "5"
+        default_value: "15"
         about: Set the concurrency level
