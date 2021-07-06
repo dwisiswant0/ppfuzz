@@ -1,13 +1,5 @@
 pub fn get() -> Vec<String> {
-	let mut payload = vec![];
-
-	let object = get_object();
-	let pointer = get_pointer();
-
-	payload.extend(object);
-	payload.extend(pointer);
-
-	payload
+	[get_object(), get_pointer()].concat()
 }
 
 fn get_object() -> Vec<String> {
@@ -19,7 +11,9 @@ fn get_object() -> Vec<String> {
 
 	suffixes
 		.iter()
-		.map(|suffix| PREFIX.to_owned() + suffix)
+		.map(|suffix| format!(
+			"{}{}", PREFIX, suffix
+		))
 		.collect()
 }
 
@@ -32,6 +26,8 @@ fn get_pointer() -> Vec<String> {
 
 	suffixes
 		.iter()
-		.map(|suffix| PREFIX.to_owned() + suffix)
+		.map(|suffix| format!(
+			"{}{}", PREFIX, suffix
+		))
 		.collect()
 }
