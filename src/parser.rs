@@ -48,7 +48,7 @@ impl Options {
 				.unwrap_or(30),
 			concurrency: matches
 				.value_of_t("concurrency")
-				.unwrap_or(5)
+				.unwrap_or(15)
 		}
 	}
 

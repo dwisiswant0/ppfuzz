@@ -11,7 +11,7 @@ Prototype Pollution Fuzzer
 
 <img src="https://user-images.githubusercontent.com/25837540/124197070-f0ffb800-daf7-11eb-9d65-edda5d94633f.jpg" alt="ppfuzz, Prototype Pollution Fuzzer">
 
-A fast tool to scan prototype pollution vulnerability written in Rust. 🦀
+A fast tool to scan client-side prototype pollution vulnerability written in Rust. 🦀
 
 - [Installation](#installation)
   - [Binary](#binary)
@@ -54,11 +54,12 @@ Manual building executable from source code:
 ```bash
 ▶ git clone https://github.com/dwisiswant0/ppfuzz
 ▶ cd ppfuzz && cargo build --release
+# binary file located at target/release/ppfuzz
 ```
 
 ### Dependencies
 
-**ppfuzz** uses [chromiumoxide](https://github.com/mattsse/chromiumoxide), which requires the Chrome or Chromium browser to be installed.
+**ppfuzz** uses [chromiumoxide](https://github.com/mattsse/chromiumoxide), which requires Chrome or Chromium browser to be installed.
 If the `CHROME` environment variable is set, then it'll use it as the default executable. Otherwise, the filenames `google-chrome-stable`, `chromium`, `chromium-browser`, `chrome` and `chrome-browser` are searched for in standard places. If that fails, `/Applications/Google Chrome.app/...` _(on MacOS)_ or the registry _(on Windows)_ is consulted.
 
 
@@ -128,7 +129,7 @@ When I started out **ppfuzz**, I had very little or no knowledge on Rust and I b
 
 ## Attribution
 
-Besides being my learning medium, this tool was created because it was inspired by a tip shared by [@R0X4R](https://twitter.com/R0X4R/status/1402906185301323776) on [how to automate prototype pollution checking](https://twitter.com/R0X4R/status/1402906185301323776) using [page-fetch](https://github.com/detectify/page-fetch).
+Besides being my learning medium, this tool was created because it was inspired by [@R0X4R](https://twitter.com/R0X4R/status/1402906185301323776)'s tip on [how to automate prototype pollution checking](https://twitter.com/R0X4R/status/1402906185301323776) using [page-fetch](https://github.com/detectify/page-fetch).
 
 Cross-compile GitHub workflow inspired by [crodjer](https://github.com/crodjer)'s [sysit](https://github.com/crodjer/sysit/commit/160bdae51b2c90c3b6e8a0e6c4832506ebc55694).
 

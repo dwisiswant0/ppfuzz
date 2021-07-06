@@ -20,5 +20,8 @@ pub async fn config(timeout: u64) -> (Browser, Handler) {
 				},
 			})
 		.await
-		.unwrap()
+		.unwrap_or_else(|err| {
+			errors::show(format!("Unable to launch browser: {}.", err));
+			process::exit(1)
+		})
 }
