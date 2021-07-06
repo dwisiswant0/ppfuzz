@@ -91,24 +91,17 @@ jobs:
           echo "Set assets variable"
           ASSET_NAME="${{ github.event.repository.name }}-${{ steps.vars.outputs.tag }}-${{ matrix.target }}.$([[ "${{ matrix.build }}" != "windows" ]] && echo "tar.gz" || echo "exe")"
           ASSET_PATH="${BASE}/${ASSET_NAME}"
-          CHECKSUM_PATH="${ASSET_PATH%%.*}-SHA256.txt"
 
           echo "Append assets variable to GitHub environment"
           echo "ASSET_PATH=${ASSET_PATH}" >> $GITHUB_ENV
-          echo "CHECKSUM_PATH=${CHECKSUM_PATH}" >> $GITHUB_ENV
 
           echo "Pack/copying asset binary..."
           [[ "${{ matrix.build }}" != "windows" ]] && tar czf "${ASSET_PATH}" * || cp "${{ github.event.repository.name }}.exe" "${ASSET_PATH}"
           cd "${BASE}"
 
-          echo "Add checksum..."
-          eval "$([[ "${RUNNER_OS}" == "Linux" ]] && echo "sha256sum" || echo "shasum -a 256") ${ASSET_NAME} > ${CHECKSUM_PATH}"
-
       - name: "Release assets"
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ${{ env.ASSET_PATH }}
-            ${{ env.CHECKSUM_PATH }}
+          files: ${{ env.ASSET_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
