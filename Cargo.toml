@@ -1,6 +1,6 @@
 [package]
 name = "ppfuzz"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Dwi Siswanto <me@dw1.io>"]
 edition = "2018"
 description = """
