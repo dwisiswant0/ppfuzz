@@ -6,13 +6,14 @@ use {
 	url::Url
 };
 
-use crate::parser;
+use crate::{parser, payload};
 
 const CHECK_SCRIPT: &str = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
 const FINGERPRINT: &str = include_str!("fingerprint.js");
 
 pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	let browser = Arc::new(browser);
+	let mut targets: Vec<String> = vec![];
 	let mut stream = stream::iter(urls.into_iter()
 		.map(|url| (url, Arc::clone(&browser)))
 		.map(|(url, browser)| async move {
@@ -51,12 +52,30 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	while let Some(res) = stream.next().await {
 		if let Ok((ref url, vuln, is_err, detail, gadgets)) = res {
 			if vuln {
-				let mut target = Url::parse(url).unwrap();
-
 				println!("[{}] {}", "VULN".green(), url);
 
-				target.set_query(None);
-				escalate(target.to_string(), gadgets);
+				let payloads = payload::get();
+				let mut target = Url::parse(url).unwrap();
+				let mut new_target = target.clone();
+				let mut queries: Vec<(_, _)> = target
+					.query_pairs()
+					.collect();
+
+				for p in payloads {
+					queries = queries.into_iter()
+						.filter(|q| q.0 != p)
+						.collect();
+				}
+
+				new_target.set_query(None);
+				target = Url::parse_with_params(
+					new_target.as_str(), &queries
+				).unwrap();
+
+				if !targets.iter().any(|t| t == target.as_str()) {
+					escalate(target.to_string(), gadgets);
+					targets.push(target.to_string());
+				}
 			} else {
 				let mut msg = format!("[{}] {}", "ERRO".red(), url);
 				if is_err {
