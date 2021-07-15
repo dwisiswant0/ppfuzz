@@ -8,7 +8,8 @@ use {
 
 use crate::parser;
 
-static CHECK_SCRIPT: &str = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
+const CHECK_SCRIPT: &str = "(window.ppfuzz || Object.prototype.ppfuzz) == 'reserved' && true || false";
+const FINGERPRINT: &str = include_str!("fingerprint.js");
 
 pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	let browser = Arc::new(browser);
@@ -32,7 +33,7 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 
 			if vuln {
 				gadgets = match page
-					.evaluate(include_str!("fingerprint.js"))
+					.evaluate(FINGERPRINT)
 					.await {
 						Ok(res) => {
 							page.close().await.unwrap();
