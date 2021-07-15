@@ -1,4 +1,5 @@
 // Original taken from https://gist.github.com/nikitastupin/b3b64a9f8c0eb74ce37626860193eaec
+// Update some based on https://github.com/BlackFan/client-side-prototype-pollution/tree/master/gadgets
 
 (() => {
   let gadgets = [];
@@ -77,6 +78,34 @@
 
   if (typeof $ !== 'undefined' && typeof $.zepto !== 'undefined') {
     gadgets.push('Zepto.js');
+  }
+
+  if (typeof Vue != 'undefined') {
+    gadgets.push('Vue.js');
+  }
+
+  if (typeof Demandbase != 'undefined') {
+    gadgets.push('Demandbase Tag');
+  }
+
+  if (typeof _analytics !== 'undefined' && typeof analyticsGtagManager !== 'undefined') {
+    gadgets.push('Google Tag Manager/Analytics');
+  }
+
+  if (typeof i18next !== 'undefined') {
+    gadgets.push('i18next');
+  }
+
+  if (typeof GoogleAnalyticsObject !== 'undefined') {
+    gadgets.push('Google Analytics');
+  }
+
+  if (typeof Popper !== 'undefined') {
+    gadgets.push('Popper.js');
+  }
+
+  if (typeof pendo !== 'undefined') {
+    gadgets.push('Pendo Agent');
   }
 
   return gadgets;

