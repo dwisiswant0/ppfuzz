@@ -73,7 +73,7 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 				).unwrap();
 
 				if !targets.iter().any(|t| t == target.as_str()) {
-					escalate(target.to_string(), gadgets);
+					fingerprint(target.to_string(), gadgets);
 					targets.push(target.to_string());
 				}
 			} else {
@@ -89,7 +89,7 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	}
 }
 
-fn escalate(target: String, gadgets: Vec<String>) {
+fn fingerprint(target: String, gadgets: Vec<String>) {
 	for gadget in gadgets.iter() {
 		match gadget.as_str() {
 			"Adobe Dynamic Tag Management" => {
