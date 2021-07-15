@@ -1,6 +1,6 @@
-mod payload;
-
 use url::Url;
+
+use crate::payload;
 
 pub fn query(url: String) -> Vec<String> {
 	let payload = payload::get();

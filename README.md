@@ -17,6 +17,7 @@ A fast tool to scan client-side prototype pollution vulnerability written in Rus
   - [Binary](#binary)
   - [Source](#source)
   - [Dependencies](#dependencies)
+- [Demonstration](#demonstration)
 - [Usage](#usage)
   - [Basic](#basic)
   - [Options](#options)
@@ -62,10 +63,15 @@ Manual building executable from source code:
 **ppfuzz** uses [chromiumoxide](https://github.com/mattsse/chromiumoxide), which requires Chrome or Chromium browser to be installed.
 If the `CHROME` environment variable is set, then it'll use it as the default executable. Otherwise, the filenames `google-chrome-stable`, `chromium`, `chromium-browser`, `chrome` and `chrome-browser` are searched for in standard places. If that fails, `/Applications/Google Chrome.app/...` _(on MacOS)_ or the registry _(on Windows)_ is consulted.
 
+## Demonstration
+
+![ppfuzz-demonstration](https://user-images.githubusercontent.com/25837540/125734819-b4e53913-6f6b-4d3c-937a-e936526d6483.gif)
+
+As you can see in the demo above _(click to view in high-quality)_, **ppfuzz** attempts to check for prototype-pollution vulnerabilities by adding an object & pointer queries, if it's indeed vulnerable: it'll fingerprinting the script gadgets used and then display additional payload info that could potentially escalate its impact to XSS, bypass or cookie injection.
 
 ## Usage
 
-It's fairly simple to use ppfuzz!
+It's fairly simple to use **ppfuzz**!
 
 ```bash
 ▶ ppfuzz -l FILE [OPTIONS]
@@ -125,7 +131,7 @@ Here are all the options it supports:
 
 [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwisiswant0/ppfuzz/issues)
 
-When I started out **ppfuzz**, I had very little or no knowledge on Rust and I believe there may be a lot of drawbacks/security vulnerabilities. So all contributions are welcome, of course — any bug reports & suggestions are appreciated, some environment have not been tested yet.
+When I started **ppfuzz**, I had very little or no knowledge on Rust and I believe there may be a lot of drawbacks/security vulnerabilities. So all contributions are welcome, of course — any bug reports & suggestions are appreciated, some environment have not been tested yet.
 
 ## Attribution
 
@@ -143,4 +149,4 @@ Since this tool includes some contributions, I'll publically thank the following
 
 ## License
 
-**ppfuzz** is distributed under MIT license. See `LICENSE`.
+**ppfuzz** is distributed under MIT. See `LICENSE`.
