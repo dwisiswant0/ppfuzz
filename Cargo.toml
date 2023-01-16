@@ -22,7 +22,7 @@ readme = "README.md"
 async-std = "1.9"
 atty = "0.2"
 chromiumoxide = "0.3.1"
-clap = { git = "https://github.com/clap-rs/clap.git", version = "3.0.0-beta.2", tag = "v3.0.0-beta.2", features = ["yaml"] }
+clap = { git = "https://github.com/clap-rs/clap.git", version = "3.0.0-beta.2", tag = "v4.1.1", features = ["yaml"] }
 colored = "2"
 futures = "0.3"
 url = "2.2"
