@@ -19,7 +19,7 @@ categories = ["security", "web", "fuzzer", "bugbounty", "headless"]
 readme = "README.md"
 
 [dependencies]
-async-std = "1.9"
+smol = "2.0"
 atty = "0.2"
 chromiumoxide = "0.3.1"
 clap = { git = "https://github.com/clap-rs/clap.git", version = "3.0.0-beta.2", tag = "v3.0.0-beta.2", features = ["yaml"] }
