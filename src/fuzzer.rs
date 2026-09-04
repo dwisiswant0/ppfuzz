@@ -61,9 +61,18 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 					.query_pairs()
 					.collect();
 
-				for p in payloads {
+				// Which payload actually triggered the pollution tells us
+				// which root path (e.g. plain "__proto__" vs. a sanitizer
+				// bypass like "__pro__proto__to__") is safe to keep using
+				// for the gadget exploit payloads below.
+				let root = payloads.iter()
+					.find(|(key, _)| queries.iter().any(|q| &q.0 == key))
+					.map(|(_, root)| root.clone())
+					.unwrap_or_else(|| "__proto__".to_string());
+
+				for (p, _) in &payloads {
 					queries = queries.into_iter()
-						.filter(|q| q.0 != p)
+						.filter(|q| &q.0 != p)
 						.collect();
 				}
 
@@ -73,7 +82,7 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 				).unwrap();
 
 				if !targets.iter().any(|t| t == target.as_str()) {
-					fingerprint(target.to_string(), gadgets);
+					fingerprint(target.to_string(), gadgets, &root);
 					targets.push(target.to_string());
 				}
 			} else {
@@ -89,11 +98,13 @@ pub async fn new(urls: Vec<String>, browser: Browser, opt: parser::Options) {
 	}
 }
 
-fn fingerprint(target: String, gadgets: Vec<String>) {
+fn fingerprint(target: String, gadgets: Vec<String>, root: &str) {
+	let show = |url: Url, gadget: &str| show_pontential(url, gadget, root);
+
 	for gadget in gadgets.iter() {
 		match gadget.as_str() {
 			"Adobe Dynamic Tag Management" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -107,7 +118,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Akai Boomerang" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -125,7 +136,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Closure" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -142,7 +153,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -156,7 +167,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"DOMPurify" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -173,7 +184,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -187,7 +198,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Embedly" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -201,7 +212,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"jQuery" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -218,7 +229,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -235,7 +246,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -256,7 +267,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -269,7 +280,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -282,7 +293,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -303,7 +314,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -325,7 +336,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				);
 			},
 			"js-xss" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -343,7 +354,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Knockout.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -361,7 +372,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Lodash <= 4.17.15" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -375,7 +386,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Marionette.js / Backbone.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -397,7 +408,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Google reCAPTCHA" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -411,7 +422,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"sanitize-html" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -424,7 +435,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -438,7 +449,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Segment Analytics.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -460,7 +471,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Sprint.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -474,7 +485,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Swiftype Site Search" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -488,7 +499,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Tealium Universal Tag" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -506,7 +517,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Twitter Universal Website Tag" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -524,7 +535,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Wistia Embedded Video" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -538,7 +549,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Zepto.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -552,7 +563,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Vue.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -565,7 +576,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -590,7 +601,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -603,7 +614,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -624,7 +635,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -641,7 +652,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -655,7 +666,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Demandbase Tag" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -673,7 +684,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Google Tag Manager/Analytics" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -687,7 +698,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"i18next" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -708,7 +719,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -737,7 +748,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -755,7 +766,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				);
 			},
 			"Google Analytics" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -769,7 +780,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				)
 			},
 			"Popper.js" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -786,7 +797,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -803,7 +814,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 					.unwrap(), gadget
 				);
 
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -821,7 +832,7 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 				);
 			},
 			"Pendo Agent" => {
-				show_pontential(
+				show(
 					Url::parse_with_params(
 						&target,
 						&[
@@ -839,7 +850,19 @@ fn fingerprint(target: String, gadgets: Vec<String>) {
 	}
 }
 
-fn show_pontential(url: impl AsRef<str>, gadget: &str) {
+fn show_pontential(url: impl AsRef<str>, gadget: &str, root: &str) {
+	let mut url = url.as_ref().to_string();
+
+	// Gadget payloads are templated against a plain "__proto__" root; when
+	// the source was only reachable through a bypass root (or the pointer
+	// path), rewrite the query key so the suggested exploit URL survives
+	// the same sanitizer the source payload had to get past.
+	if root != "__proto__" {
+		url = url
+			.replacen("?__proto__", &format!("?{}", root), 1)
+			.replace("&__proto__", &format!("&{}", root));
+	}
+
 	let gad = format!("({})", gadget);
-	println!("[{}] {} {}", "INFO".blue(), url.as_ref(), gad.green());
+	println!("[{}] {} {}", "INFO".blue(), url, gad.green());
 }
